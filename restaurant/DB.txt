@@ -1,0 +1,73 @@
+-- 사용자
+CREATE TABLE `user_info` (
+  `USER_SEQ` int NOT NULL AUTO_INCREMENT,
+  `USER_ID` varchar(50) NOT NULL COMMENT '아이디(=이메일)',
+  `USER_PW` varchar(100) NOT NULL COMMENT '비밀번호',
+  `NAME` varchar(10) DEFAULT NULL COMMENT '이름',
+  `TEL` varchar(20) DEFAULT NULL COMMENT '전화번호',
+  `BIRTHDAY` varchar(20) DEFAULT NULL COMMENT '생년월일',
+  `GENDER` varchar(10) DEFAULT NULL COMMENT '성별(남/여)',
+  `POSTCODE` varchar(20) DEFAULT NULL COMMENT '우편번호',
+  `ADDR1` varchar(50) DEFAULT NULL COMMENT '주소',
+  `ADDR2` varchar(50) DEFAULT NULL COMMENT '상세주소',
+  `REG_DATE` datetime DEFAULT NULL COMMENT '가입일자',
+  `EDIT_DATE` datetime DEFAULT NULL COMMENT '수정일자',
+  `USER_TYPE` varchar(10) DEFAULT NULL COMMENT '구분(일반/관리자)',
+  `LOGIN_TYPE` varchar(10) DEFAULT NULL COMMENT 'SNS 로그인 구분',
+  `ADD_ITEM1` varchar(255) DEFAULT NULL,
+  `ADD_ITEM2` varchar(255) DEFAULT NULL,
+  `ADD_ITEM3` varchar(255) DEFAULT NULL,
+  `ADD_ITEM4` varchar(255) DEFAULT NULL,
+  `ADD_ITEM5` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`USER_SEQ`)
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb3 COMMENT='회원정보 테이블'
+
+
+
+
+
+
+
+
+-- 게시판
+CREATE TABLE `bbs_artcl` (
+  `ARTCL_SEQ` int NOT NULL AUTO_INCREMENT,
+  `TITLE` varchar(100) NOT NULL COMMENT '제목',
+  `CONTENT` longtext NOT NULL COMMENT '내용',
+  `WRITER` varchar(20) NOT NULL COMMENT '작성자',
+  `REG_DATE` datetime DEFAULT NULL COMMENT '등록일자',
+  `EDIT_DATE` datetime DEFAULT NULL COMMENT '수정일자',
+  `HIT` varchar(10) DEFAULT NULL COMMENT '조회수',
+  `TYPE` varchar(10) DEFAULT NULL COMMENT '게시판 구분',
+  `IP` varchar(50) DEFAULT NULL COMMENT '작성자 IP',
+  `ADD_ITEM1` varchar(255) DEFAULT NULL,
+  `ADD_ITEM2` varchar(255) DEFAULT NULL,
+  `ADD_ITEM3` varchar(255) DEFAULT NULL,
+  `ADD_ITEM4` varchar(255) DEFAULT NULL,
+  `ADD_ITEM5` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ARTCL_SEQ`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='게시판'
+
+
+
+
+-- 게시판 첨부파일
+CREATE TABLE `bbs_atchmnfl` (
+  `ATCHMNFL_SEQ` int NOT NULL AUTO_INCREMENT,
+  `ARTCL_SEQ` int NOT NULL COMMENT '게시글 번호',
+  `WRITER` varchar(20) NOT NULL COMMENT '작성자',
+  `REG_DATE` datetime DEFAULT NULL COMMENT '등록일자',
+  `EDIT_DATE` datetime DEFAULT NULL COMMENT '수정일자',
+  `ORIGIN_NM` varchar(255) DEFAULT NULL COMMENT '첨부파일 원본 이름',
+  `FIME_NM` varchar(255) DEFAULT NULL COMMENT '첨부파일 변경 이름',
+  `PATH` varchar(255) DEFAULT NULL COMMENT '첨부파일 경로',
+  `TYPE` varchar(10) DEFAULT NULL COMMENT '구분',
+  `ADD_ITEM1` varchar(255) DEFAULT NULL,
+  `ADD_ITEM2` varchar(255) DEFAULT NULL,
+  `ADD_ITEM3` varchar(255) DEFAULT NULL,
+  `ADD_ITEM4` varchar(255) DEFAULT NULL,
+  `ADD_ITEM5` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`ATCHMNFL_SEQ`),
+  KEY `ARTCL_SEQ_idx` (`ARTCL_SEQ`),
+  CONSTRAINT `ARTCL_SEQ` FOREIGN KEY (`ARTCL_SEQ`) REFERENCES `bbs_artcl` (`ARTCL_SEQ`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COMMENT='게시판 첨부파일 테이블';
