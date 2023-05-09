@@ -1,7 +1,6 @@
 package com.project.restaurant.user;
 
 import java.util.Date;
-import java.util.List;
 
 public class User {
 

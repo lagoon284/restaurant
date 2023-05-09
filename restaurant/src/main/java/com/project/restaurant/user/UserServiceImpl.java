@@ -1,15 +1,12 @@
 package com.project.restaurant.user;
 
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.project.restaurant.login.NaverLoginBO;
 import com.project.restaurant.util.Encrypt;
 
 @Service

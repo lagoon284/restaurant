@@ -9,7 +9,6 @@ import javax.servlet.http.HttpSession;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -71,6 +70,7 @@ public class SnsLoginController {
 		HttpSession session = request.getSession();
 		
 		OAuth2AccessToken oauthToken = kakaoLoginBO.getAccessToken(session, code, state);
+		System.out.println("oauthToken	::	" + oauthToken);
 		
 		//로그인 사용자 정보를 읽어온다.
 		String apiResult = kakaoLoginBO.getUserProfile(oauthToken);
@@ -144,9 +144,12 @@ public class SnsLoginController {
 	 * @return
 	 * @throws Exception
 	 */
-	@RequestMapping("/naver")
-	public String naverLogin(User user, Model model, @RequestParam String code, @RequestParam String state) 
+	@ResponseBody
+	@RequestMapping(value="/naver", method = RequestMethod.GET)
+	public ModelAndView naverLogin(User user, Model model, @RequestParam String code, @RequestParam String state) 
 			throws Exception {
+		
+		ModelAndView mav = new ModelAndView("/index");
 		
 		System.out.println("NaverLogin Start!!!!!!!");
 		
@@ -170,13 +173,13 @@ public class SnsLoginController {
 		String age = (String) response_obj.get("age");
 		String mobile = (String) response_obj.get("mobile");
 		String gender = (String) response_obj.get("gender");
-		Integer birthyear = Integer.valueOf((String)response_obj.get("birthyear")) ;
+		String birthyear = (String)response_obj.get("birthyear");
 		String birthday = (String) response_obj.get("birthday");
 
 		/** 네이버로 회원가입 시 중복회원 검사 */
 		int result = userService.duplicationUser(email, "naver");
 		
-		if (result < 0) {
+		if (result <= 0) {
 			user.setUserId(email);
 			user.setName(name);
 			user.setTel(mobile);
@@ -202,7 +205,7 @@ public class SnsLoginController {
 		session.setAttribute("loginType", user.getLoginType());
 		session.setMaxInactiveInterval(60 * 10 * 1);
 		
-		return "redirect:/";
+		return mav;
         
 	}
 	

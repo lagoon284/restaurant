@@ -77,7 +77,6 @@ public class KakaoLoginBO {
 
             /* Scribe에서 제공하는 AccessToken 획득 기능으로 네아로 Access Token을 획득 */
             OAuth2AccessToken accessToken = oauthService.getAccessToken(code);
-            
             return accessToken;
         }
         return null;
