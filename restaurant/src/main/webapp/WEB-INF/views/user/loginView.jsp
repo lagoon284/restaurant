@@ -268,7 +268,7 @@
 					</label>
 
 					<label for="google_login"  class="visually-hidden">
-						<a href="javascript:alert('구글 로그인 기능 준비 중 입니다.');">
+						<a href="${googleAuthUrl }">
 							<img src="${pageContext.request.contextPath }/assets/image/google.png" />
 						</a>
 					</label>

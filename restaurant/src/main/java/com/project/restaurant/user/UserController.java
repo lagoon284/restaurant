@@ -4,14 +4,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.project.restaurant.login.GoogleLoginBO;
+import com.project.restaurant.login.KakaoLoginBO;
+import com.project.restaurant.login.NaverLoginBO;
 import com.project.restaurant.util.WebHelper;
 
 
@@ -20,16 +22,86 @@ import com.project.restaurant.util.WebHelper;
 public class UserController {
 
 	@Autowired
-	private UserService userService;
+	private UserServiceImpl userService;
 	
 	@Autowired
 	private WebHelper web;
 	
+	
+	/* NaverLoginBO */
+	private NaverLoginBO naverLoginBO;
+	
+	/* kakaoLoginBO */
+	private KakaoLoginBO kakaoLoginBO;
+	
+	/* kakaoLoginBO */
+	private GoogleLoginBO googleLoginBO;
+	
+	@Value("${kakao.auth.requestUrl}")
+	private String requestUrl;
+	
+	@Value("${kakao.auth.grantType}")
+	private String grantType;
+	
+	@Value("${kakao.auth.clientId}")
+	private String clientId;
+	
+	@Value("${kakao.auth.redirectUrl}")
+	private String redirectUrl;
+	
+	@Autowired
+	private void setNaverLoginBO(NaverLoginBO naverLoginBO) {
+		this.naverLoginBO = naverLoginBO;
+	}
+	
+	@Autowired
+	private void setKakaoLoginBO(KakaoLoginBO kakaoLoginBO) {
+		this.kakaoLoginBO = kakaoLoginBO;
+	}
+	
+	@Autowired
+	private void setGoogleLoginBO(GoogleLoginBO googleLoginBO) {
+		this.googleLoginBO = googleLoginBO;
+	}
+	
+
+	/**
+	 * 로그인 페이지
+	 * @return
+	 */
+	@RequestMapping(value = "/loginView")
+	public String userLoginView(Model model, HttpSession session) {
+		
+		/* 네이버 로그인 인증 URL을 생성하기 위하여 naverLoginBO클래스의 getAuthorizationUrl메소드 호출 */
+		String naverAuthUrl =  naverLoginBO.getAuthorizationUrl(session);
+		/* 카카오 로그인 인증 URL을 생성하기 위하여 kakaoLoginBO클래스의 getAuthorizationUrl메소드 호출 */
+		String kakaoAuthUrl =  kakaoLoginBO.getAuthorizationUrl(session);
+		/* 구글 로그인 인증 URL을 생성하기 위하여 googleLoginBO클래스의 getAuthorizationUrl메소드 호출 */
+		String googleAuthUrl =  googleLoginBO.getAuthorizationUrl(session);
+		
+		/* 객체 바인딩 */
+		model.addAttribute("naverAuthUrl", naverAuthUrl);
+		model.addAttribute("kakaoAuthUrl", kakaoAuthUrl);
+		model.addAttribute("googleAuthUrl", googleAuthUrl);
+		
+		System.out.println("naver	::	" + naverAuthUrl);
+		System.out.println("kakao	::	" + kakaoAuthUrl);
+		System.out.println("google	::	" + googleAuthUrl);
+		
+		model.addAttribute("requestUrl", requestUrl);
+		model.addAttribute("grantType", grantType);
+		model.addAttribute("clientId", clientId);
+		model.addAttribute("redirectUrl", redirectUrl);
+		
+		return "/user/loginView";
+	}
+	
+
 	/**
 	 * 회원가입 페이지
 	 * @return
 	 */
-	@GetMapping(value = "/userRegistView")
+	@RequestMapping(value = "/userRegistView")
 	public String userRegistView(Model model) {
 		return "/user/registView";
 	}
@@ -39,7 +111,7 @@ public class UserController {
 	 * 비밀번호 찾기 페이지
 	 * @return
 	 */
-	@GetMapping(value = "/userFindPwView")
+	@RequestMapping(value = "/userFindPwView")
 	public String userFindPwView(Model model) {
 		return "/user/findPwView";
 	}
@@ -51,7 +123,7 @@ public class UserController {
 	 * @param userInfo
 	 * @return
 	 */
-	@PostMapping(value = "/userRegist.do")
+	@RequestMapping(value = "/userRegist.do")
 	public String userRegist(Model model, User user) {
 
 		// 회원가입
@@ -66,7 +138,7 @@ public class UserController {
 	 * @param userId
 	 * @return
 	 */
-	@PostMapping(value = "/duplicationUserId")
+	@RequestMapping(value = "/duplicationUserId")
 	@ResponseBody
 	public int duplicateUserId(Model model, String userId) {
 		
@@ -100,7 +172,7 @@ public class UserController {
 	 * @param user_pw - 비밀번호
 	 * @return - 메인 페이지
 	 */
-	@PostMapping(value = "/login.do")
+	@RequestMapping(value = "/login.do")
 	@ResponseBody
 	public User userLogin(Model model, HttpServletRequest request, 
 						  @RequestParam(value = "userId") String userId, 
@@ -133,7 +205,7 @@ public class UserController {
 	 * @param request
 	 * @return
 	 */
-	@PostMapping(value = "/logout.do")
+	@RequestMapping(value = "/logout.do")
 	public String logout(HttpServletRequest request) {
 		
 		HttpSession session = request.getSession(false);

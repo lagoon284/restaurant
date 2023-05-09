@@ -41,6 +41,9 @@ public class SnsLoginController {
 	
 	/* KakaoLoginBO*/
 	private KakaoLoginBO kakaoLoginBO;
+
+	/* googleLoginBO*/
+	private GoogleLoginBO googleLoginBO;
 	
 	@Autowired
 	private void setNaverLoginBO(NaverLoginBO naverLoginBO) {
@@ -50,6 +53,11 @@ public class SnsLoginController {
 	@Autowired
 	private void setKakaoLoginBO(KakaoLoginBO kakaoLoginBO) {
 		this.kakaoLoginBO = kakaoLoginBO;
+	}
+	
+	@Autowired
+	private void setGoogleLoginBO(GoogleLoginBO googleLoginBO) {
+		this.googleLoginBO = googleLoginBO;
 	}
 	
 	
@@ -275,11 +283,68 @@ public class SnsLoginController {
 //	}
 	
 	
-	
-	public String googleLogin(User user) {
+	@ResponseBody
+	@RequestMapping(value="/google", method = RequestMethod.GET)
+	public ModelAndView googleLogin(User user,  Model model, @RequestParam String code, @RequestParam String state)
+				throws Exception {
 		
-		
-		return null;
+			ModelAndView mav = new ModelAndView("/index");
+			
+			System.out.println("GoogleLogin Start!!!!!!!");
+			
+			HttpSession session = request.getSession();
+			
+			OAuth2AccessToken oauthToken = googleLoginBO.getAccessToken(session, code, state);
+			System.out.println("oauthToken	::	" + oauthToken);
+			
+	        //로그인 사용자 정보를 읽어온다.
+			String apiResult = googleLoginBO.getUserProfile(oauthToken);
+			System.out.println("apiResult	::	" + apiResult);
+		    
+	        // apiResult값을 JSON형태로 변환
+		    JSONParser jsonParser = new JSONParser();
+		    JSONObject jsonObj = (JSONObject) jsonParser.parse(apiResult);
+			JSONObject response_obj = (JSONObject) jsonObj.get("response");	
+			
+			// response의 데이터 파싱
+			String name = (String) response_obj.get("name");
+			String email = (String) response_obj.get("email");
+			String age = (String) response_obj.get("age");
+			String mobile = (String) response_obj.get("mobile");
+			String gender = (String) response_obj.get("gender");
+			String birthyear = (String)response_obj.get("birthyear");
+			String birthday = (String) response_obj.get("birthday");
+
+			/** 네이버로 회원가입 시 중복회원 검사 */
+			int result = userService.duplicationUser(email, "google");
+			
+			if (result <= 0) {
+				user.setUserId(email);
+				user.setName(name);
+				user.setTel(mobile);
+				
+				if ("M".equals(gender)) {
+					user.setGender("male");
+				} else if ("W".equals(gender)) {
+					user.setGender("female");
+				} else {
+					user.setGender("none");
+				}
+				
+				user.setBirthday(birthyear + "-" + birthday);
+				user.setUserType("normal");
+				user.setLoginType("google");
+				
+				userService.insertUser(user);
+			}
+			
+			session.setAttribute("userId", email);
+			session.setAttribute("name", name);
+			session.setAttribute("userType", user.getUserType());
+			session.setAttribute("loginType", user.getLoginType());
+			session.setMaxInactiveInterval(60 * 10 * 1);
+			
+			return mav;
 	}
 	
 }

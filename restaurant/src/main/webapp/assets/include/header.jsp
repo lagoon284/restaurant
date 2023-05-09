@@ -40,7 +40,7 @@
 					<div class="main-menu text-center">
 						<nav id="mobile-menu">
 							<ul>
-								<li class="active"><a href="${pageContext.request.contextPath }/loginView">LOGIN</a>
+								<li class="active"><a href="${pageContext.request.contextPath }/user/loginView">LOGIN</a>
 								<!-- 
 								<ul class="sub-menu text-left">
 									<li><a href="index.html">home 1</a></li>
@@ -105,7 +105,7 @@
 									<a onClick="javascript:logout();">로그아웃</a>	
 								</c:when>
 								<c:otherwise>
-									<a href="${pagecontext.request.contextPath }/loginView">로그인</a>
+									<a href="${pagecontext.request.contextPath }/user/loginView">로그인</a>
 								</c:otherwise>
 							</c:choose>
 						</div>
