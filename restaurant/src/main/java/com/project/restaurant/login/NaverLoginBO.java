@@ -109,6 +109,9 @@ public class NaverLoginBO {
 		OAuthRequest request = new OAuthRequest(Verb.GET, profileApiUrl, oauthService);
 		oauthService.signRequest(oauthToken, request);
 		Response response = request.send();
+		
+		System.out.println("response   ::   " + response);
+		
 		return response.getBody();
 	}
 }

@@ -175,6 +175,8 @@ public class SnsLoginController {
 	    JSONObject jsonObj = (JSONObject) jsonParser.parse(apiResult);
 		JSONObject response_obj = (JSONObject) jsonObj.get("response");	
 		
+		System.out.println("jsonObj   ::   " + jsonObj);
+		
 		// response의 데이터 파싱
 		String name = (String) response_obj.get("name");
 		String email = (String) response_obj.get("email");
@@ -299,8 +301,10 @@ public class SnsLoginController {
 			
 	        //로그인 사용자 정보를 읽어온다.
 			String apiResult = googleLoginBO.getUserProfile(oauthToken);
-			System.out.println("apiResult	::	" + apiResult);
+//			System.out.println("apiResult	::	" + apiResult);
+			
 		    
+			
 	        // apiResult값을 JSON형태로 변환
 		    JSONParser jsonParser = new JSONParser();
 		    JSONObject jsonObj = (JSONObject) jsonParser.parse(apiResult);

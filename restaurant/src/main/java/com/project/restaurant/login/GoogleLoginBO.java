@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpSession;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -63,7 +65,10 @@ public class GoogleLoginBO {
 		if (StringUtils.pathEquals(sessionState, state)) {
 
 			OAuth20Service oauthService = new ServiceBuilder().apiKey(clientId).apiSecret(clientSecret)
-					.callback(redirectUrl).state(state).scope(scope).build(NaverOauthApi.instance());
+					.callback(redirectUrl).state(state).scope(scope).build(GoogleOauthApi.instance());
+			
+//			System.out.println("code   ::   " + code);
+//			System.out.println("oauth Service   ::   " + oauthService);
 
 			/* Scribe에서 제공하는 AccessToken 획득 기능으로 네아로 Access Token을 획득 */
 			OAuth2AccessToken accessToken = oauthService.getAccessToken(code);
@@ -91,11 +96,19 @@ public class GoogleLoginBO {
 	public String getUserProfile(OAuth2AccessToken oauthToken) throws IOException {
 
 		OAuth20Service oauthService = new ServiceBuilder().apiKey(clientId).apiSecret(clientSecret)
-				.callback(redirectUrl).build(NaverOauthApi.instance());
+				.callback(redirectUrl).build(GoogleOauthApi.instance());
+		
+		System.out.println("oauth service   ::   " + oauthService);
 
 		OAuthRequest request = new OAuthRequest(Verb.GET, profileApiUrl, oauthService);
 		oauthService.signRequest(oauthToken, request);
+		
+		System.out.println("request   ::   " + request);
+		
 		Response response = request.send();
+		
+		System.out.println("response   ::   " + response);
+		
 		return response.getBody();
 	}
 }
